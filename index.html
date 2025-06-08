@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bitwise Matching Pattern</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      background-color: #007acc;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    .result {
+      margin-top: 25px;
+      font-size: 17px;
+      font-weight: 500;
+      background-color: #f0f4f8;
+      padding: 15px;
+      border-radius: 6px;
+      color: #2d3436;
+    }
+    .note {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #636e72;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bitwise Matching Pattern</h1>
+    <label for="inputNumber">Enter an integer (non-negative):</label>
+    <input type="number" id="inputNumber" min="0" placeholder="e.g. 6" />
+
+    <button onclick="computeNext()">Find Next Larger Integer</button>
+
+    <div class="result" id="result"></div>
+    <div class="note">
+      Finds the next larger integer that has the <br /><b>same number of 1s</b> in its binary form.
+    </div>
+  </div>
+
+  <script>
+    function nextLargerWithSameBits(n) {
+      if (n <= 0) return -1;
+
+      let c = n, c0 = 0, c1 = 0;
+      while (((c & 1) === 0) && (c !== 0)) {
+        c0++;
+        c >>= 1;
+      }
+      while ((c & 1) === 1) {
+        c1++;
+        c >>= 1;
+      }
+
+      if (c0 + c1 === 31 || c0 + c1 === 0) return -1;
+
+      const p = c0 + c1;
+      n |= (1 << p);
+      n &= ~((1 << p) - 1);
+      n |= (1 << (c1 - 1)) - 1;
+
+      return n;
+    }
+
+    function computeNext() {
+      const input = document.getElementById('inputNumber').value.trim();
+      const resultDiv = document.getElementById('result');
+      if (input === '') {
+        resultDiv.textContent = 'Please enter a non-negative integer.';
+        return;
+      }
+
+      const num = Number(input);
+      if (!Number.isInteger(num) || num < 0) {
+        resultDiv.textContent = 'Input must be a non-negative integer.';
+        return;
+      }
+
+      const next = nextLargerWithSameBits(num);
+
+      if (next === -1) {
+        resultDiv.textContent = `No larger integer with the same number of 1 bits exists for ${num}.`;
+      } else {
+        resultDiv.textContent =
+          `Input: ${num} (binary: ${num.toString(2)})\n` +
+          `Next larger integer: ${next} (binary: ${next.toString(2)})`;
+      }
+    }
+  </script>
+</body>
+</html>
